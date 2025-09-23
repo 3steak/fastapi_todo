@@ -1,26 +1,29 @@
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
-from sqlalchemy.orm import relationship
-
+from sqlalchemy.orm import relationship, Mapped, mapped_column
+from typing import Optional
 from db.database import Base
 
 class Todo(Base):
     __tablename__ = 'todos'
 
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, index=True)
-    archived = Column(Boolean, default=False, index=True)
-    items = relationship("TodoItem", back_populates="todo", cascade="all, delete-orphan")
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    title :Mapped[str]
+    archived : Mapped[Optional[bool]]
+
+    # relation
+    items : Mapped[list["TodoItem"]] = relationship(back_populates="todo", cascade="all, delete-orphan")
+
 
 # ajout model todoitem
 class TodoItem(Base):
         __tablename__ = 'todo_items'
 
-        id = Column(Integer, primary_key=True, index=True)
-        item_title = Column(String, index=True)
-        completed = Column(Boolean, default=False, index=True)
+        id: Mapped[int] = mapped_column(Integer, primary_key=True)
+        item_title :Mapped[str]
+        completed : Mapped[Optional[bool]]
 
-        todo_id=  Column(Integer, ForeignKey("todos.id"))
-        todo =  relationship("Todo", back_populates="items")
+        todo_id : Mapped[int] =  mapped_column(ForeignKey("todos.id"))
+        todo : Mapped["Todo"] =  relationship(back_populates="items")
 
 
 

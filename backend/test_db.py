@@ -12,7 +12,8 @@ def add_todos():
     session = SessionLocal()
     try:
         todolist1 = Todo(title="Courses")
-        todolist2 = Todo(title="Sports")
+        todolist2 = Todo(title="Sport")
+
         session.add_all([todolist1, todolist2])
         session.commit()
         print("Todolist ajoutées avec succès !")
@@ -51,5 +52,6 @@ def get_todos():
 # Menu principal
 if __name__ == "__main__":
     create_tables()
+    add_todos()
     add_item()
     get_todos()
