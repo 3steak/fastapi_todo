@@ -5,8 +5,18 @@ from typing import List
 from app.db.database import Base, engine, get_sessiondep
 from app.schemas.todo import TodoSchema, TodoCreate, TodoItemSchema, TodoItemCreate
 from app.crud import todo as crud
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 # Crée les tables
 Base.metadata.create_all(bind=engine)

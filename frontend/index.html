@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ma TodoList</title>
+</head>
+
+<body>
+    <h1>Ma TodoList</h1>
+
+    <input type="text" id="new-todo" placeholder="Titre de la todo">
+    <button onclick="addTodo()">Ajouter</button>
+
+    <h2>Liste des Todos</h2>
+    <ul id="todo-list"></ul>
+
+    <script>
+        const API_URL = "http://127.0.0.1:8000";
+
+        async function getTodos() {
+            const response = await fetch(`${API_URL}/todos`);
+            const todos = await response.json();
+            renderTodos(todos);
+        }
+
+        async function addTodo() {
+            const input = document.getElementById("new-todo");
+            const title = input.value;
+            if (!title) return;
+
+            await fetch(`${API_URL}/todos`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ title })
+            });
+
+            input.value = "";
+            getTodos();
+        }
+
+        function renderTodos(todos) {
+            const list = document.getElementById("todo-list");
+            list.innerHTML = "";
+
+            todos.forEach(todo => {
+                const li = document.createElement("li");
+                li.textContent = `${todo.title} (archivé: ${todo.archived})`;
+
+                // ↓ afficher les items de la todo
+                if (todo.items && todo.items.length > 0) {
+                    const ulItems = document.createElement("ul");
+                    todo.items.forEach(item => {
+                        const liItem = document.createElement("li");
+                        liItem.textContent = `${item.item_title} [${item.completed ? "✅" : "❌"}]`;
+                        ulItems.appendChild(liItem);
+                    });
+                    li.appendChild(ulItems);
+                }
+
+                list.appendChild(li);
+            });
+        }
+
+        getTodos();
+    </script>
+</body>
+
+</html>

@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
 from app.models.todo import Todo, TodoItem
 from app.schemas.todo import TodoCreate, TodoItemCreate
+from sqlalchemy.orm import Session, joinedload
+
 
 # ----- Todos -----
 def create_todo(session: Session, todo: TodoCreate) -> Todo:
@@ -11,7 +13,8 @@ def create_todo(session: Session, todo: TodoCreate) -> Todo:
     return db_todo
 
 def get_todos(session: Session) -> list[Todo]:
-    return session.query(Todo).all()
+    return session.query(Todo).options(joinedload(Todo.items)).all()
+
 
 def get_todo(session: Session, todo_id: int) -> Todo | None:
     return session.get(Todo, todo_id)
