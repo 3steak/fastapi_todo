@@ -10,10 +10,10 @@ class Base(DeclarativeBase):
 # config session
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-def get_session():
-    """Créer une session pour les opérations sur la base."""
-    session = SessionLocal()
+def get_sessiondep():
+
+    sessiondep = SessionLocal()
     try:
-        yield session
+        yield sessiondep
     finally:
-        session.close()
+        sessiondep.close()

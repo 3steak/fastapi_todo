@@ -1,6 +1,7 @@
-from db.database import Base, engine, SessionLocal
+from db.database import Base, engine, get_sessiondep
 from models.todo import Todo, TodoItem
-
+from fastapi import Depends
+from sqlalchemy.orm import Session
 # Création des tables
 def create_tables():
     print("Création des tables...")
@@ -8,8 +9,7 @@ def create_tables():
     print("Tables créées avec succès !")
 
 # Ajout des todolists
-def add_todos(todolist_name :str):
-    session = SessionLocal()
+def add_todos(todolist_name :str, session : Session ):
     
     todolist = Todo(title=todolist_name)
 
@@ -18,23 +18,17 @@ def add_todos(todolist_name :str):
     session.refresh(todolist)
     return todolist
     
-# add item in todo
-def add_item(todo_id: int, item_title: str):
-    session = SessionLocal()
-    try:
-        todoitem = TodoItem(item_title=item_title, todo_id=todo_id)
-        session.add(todoitem)
-        session.commit()
-        session.refresh(todoitem)
-        return todoitem    
-    finally:
-        session.close()
+# # add item in todo
+def add_item(todo_id: int, item_title: str, session : Session):
+    todoitem = TodoItem(item_title=item_title, todo_id=todo_id)
+    session.add(todoitem)
+    session.commit()
+    session.refresh(todoitem)
+    return todoitem    
 
 
 # Lire todo
-def get_todos():
-    session = SessionLocal()
-    
+def get_todos(session : Session):    
     todos = session.query(Todo).all()
     return todos
         # for todo in todos:
@@ -51,33 +45,33 @@ def get_todos():
 # Menu principal
 
 
-def main_menu():
-    print("Bonjour que voulez vous faire ?")
-    print("1. Creer une TodoList.")
-    print("2. Ajouter quelque chose a une todolist.")
-    print("3. Afficher la ou les todolists.")
-    print("0. Quitter")
+# def main_menu():
+#     print("Bonjour que voulez vous faire ?")
+#     print("1. Creer une TodoList.")
+#     print("2. Ajouter quelque chose a une todolist.")
+#     print("3. Afficher la ou les todolists.")
+#     print("0. Quitter")
 
-    while True:
-        choice = input("Faites un choix (0-4): ")
+#     while True:
+#         choice = input("Faites un choix (0-4): ")
 
-        if choice == "1":
-            todolist_name = input("Entrez un nom de todolist: ")
-            add_todos(todolist_name)
-        elif choice == "2":
-            add_item()
-        elif choice == "3":
-            get_todos()
-        elif choice == "0":
-            print("Goodbye!")
-            break
-        else:
-            print("Mauvais choix, recommencez svp")
+#         if choice == "1":
+#             todolist_name = input("Entrez un nom de todolist: ")
+#             add_todos(todolist_name)
+#         elif choice == "2":
+#             add_item()
+#         elif choice == "3":
+#             get_todos()
+#         elif choice == "0":
+#             print("Goodbye!")
+#             break
+#         else:
+#             print("Mauvais choix, recommencez svp")
 
 
 if __name__ == "__main__":
     create_tables()
-    main_menu()
+    # main_menu()
 
 
 
